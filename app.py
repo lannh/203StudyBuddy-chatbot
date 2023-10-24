@@ -1,5 +1,4 @@
 import streamlit as st
-from dotenv import load_dotenv
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Qdrant
 import qdrant_client
@@ -8,9 +7,6 @@ from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from langchain.schema import ChatMessage
 
-import os
-
-# from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.callbacks.base import BaseCallbackHandler
 
 class StreamHandler(BaseCallbackHandler):
@@ -26,7 +22,8 @@ def get_vectorstore(client):
     
     vector_store = Qdrant(
         client=client, 
-        collection_name=os.getenv("QDRANT_COLLECTION_NAME"), 
+        #collection_name=os.getenv("QDRANT_COLLECTION_NAME"), 
+        collection_name=st.secrets["QDRANT_COLLECTION_NAME"],
         embeddings=embeddings,
     )
     
@@ -57,11 +54,12 @@ def create_collection(client, cname):
     )
 
 def main():
-    load_dotenv()
 
     client = qdrant_client.QdrantClient(
-        os.getenv("QDRANT_HOST"),
-        api_key=os.getenv("QDRANT_API_KEY")
+        #os.getenv("QDRANT_HOST"),
+        st.secrets["QDRANT_HOST"],
+        #api_key=os.getenv("QDRANT_API_KEY")
+        api_key=st.secrets["QDRANT_API_KEY"]
     )
 
     # create collection
