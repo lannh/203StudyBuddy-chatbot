@@ -22,7 +22,6 @@ def get_vectorstore(client):
     
     vector_store = Qdrant(
         client=client, 
-        #collection_name=os.getenv("QDRANT_COLLECTION_NAME"), 
         collection_name=st.secrets["QDRANT_COLLECTION_NAME"],
         embeddings=embeddings,
     )
@@ -31,10 +30,10 @@ def get_vectorstore(client):
 
 
 def get_conversation_chain(vectorstore, stream_handler):
-    llm = ChatOpenAI(streaming=True, callbacks=[stream_handler],temperature=0,)
+    llm = ChatOpenAI(streaming=True, callbacks=[stream_handler],temperature=0, max_tokens=1000)
 
     memory = ConversationBufferMemory(
-        memory_key='chat_history', return_messages=True)
+        memory_key='chat_history', return_messages=True, max_token_limit=1000)
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
         retriever=vectorstore.as_retriever(),
@@ -56,9 +55,7 @@ def create_collection(client, cname):
 def main():
 
     client = qdrant_client.QdrantClient(
-        #os.getenv("QDRANT_HOST"),
         st.secrets["QDRANT_HOST"],
-        #api_key=os.getenv("QDRANT_API_KEY")
         api_key=st.secrets["QDRANT_API_KEY"]
     )
 
@@ -68,6 +65,8 @@ def main():
     # get vector store
     vectorstore = get_vectorstore(client)
     
+    st.set_page_config(layout="wide")
+
     st.header("203 Study Buddy 💬")
 
     if "messages" not in st.session_state:
