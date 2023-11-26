@@ -114,7 +114,7 @@ def main():
             continueFlag = True
             for tmp_chunk in tmp_text_chunks:
                 token_count = len(tmp_chunk)
-                st.write(token_count)
+                # st.write(token_count)
                 if token_count > 1000:
                     st.write(f"file {uploaded_file.name} has at least a text vector with more than limit tokens, so it will be discarded")
                     continueFlag = False
