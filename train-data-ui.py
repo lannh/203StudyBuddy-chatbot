@@ -68,9 +68,7 @@ def create_collection(client, cname):
         vectors_config=vectors_config,
     )
 
-def main():
-    load_dotenv()
-    
+def main():    
     client = qdrant_client.QdrantClient(
         st.secrets["QDRANT_HOST"],
         api_key=st.secrets["QDRANT_API_KEY"],
